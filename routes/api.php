@@ -8,3 +8,7 @@ Route::post('', [VkApiController::class, 'handleRequest']);
 
 //Internal api for local server
 Route::prefix('internal')->group(base_path('routes/internal/internal_api.php'));
+
+//Public api for web view
+Route::prefix('account')->group(base_path('routes/public/account_api.php'));
+
