@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Account;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Account\SignInRequest;
 use App\Http\Requests\Account\SignUpRequest;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
