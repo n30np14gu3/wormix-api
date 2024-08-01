@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use App\Models\Wormix\UserProfile;
+use App\Models\Wormix\WormData;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int id
@@ -17,11 +17,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string password
  *
  * @property UserProfile user_profile
+ * @property WormData worm_data
+ * @property UserSocialData social_data
  *
  */
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens, HasRoles;
+    use Notifiable, HasApiTokens;
 
     protected $fillable = [
         'social_id',
@@ -35,11 +37,22 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'password' => 'hashed'
+        'password' => 'hashed',
+        'social_id' => 'string'
     ];
 
     public function user_profile() : HasOne
     {
         return $this->hasOne(UserProfile::class, 'user_id', 'id');
+    }
+
+    public function worm_data() : HasOne
+    {
+        return $this->hasOne(WormData::class, 'owner_id', 'id');
+    }
+
+    public function social_data(): HasOne
+    {
+        return $this->hasOne(UserSocialData::class, 'user_id', 'id');
     }
 }

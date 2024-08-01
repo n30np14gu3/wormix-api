@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VkApiRequest;
+use App\Models\User;
 
 class VkApiController extends Controller
 {
@@ -26,7 +27,7 @@ class VkApiController extends Controller
     private function getAppFriends()
     {
         return [
-            'response' => []
+            'response' => User::query()->select('id')->get()->pluck('id')->toArray(),
         ];
     }
 
@@ -48,7 +49,37 @@ class VkApiController extends Controller
                     "photo"=> "",
                     "photo_medium"=> "",
                     "photo_big"=> "",
-                    "has_mobile"=> 1
+                    "has_mobile"=> 1,
+                ],
+                [
+                    "uid"=> "2",
+                    "first_name"=> "ShockByte",
+                    "last_name"=> "",
+                    "nickname"=> "",
+                    "sex"=> 1,
+                    "bdate"=> "23.11.2000",
+                    "country"=> 1,
+                    "city"=> 1,
+                    "timezone"=> 1,
+                    "photo"=> "",
+                    "photo_medium"=> "",
+                    "photo_big"=> "",
+                    "has_mobile"=> 1,
+                ],
+                [
+                    "uid"=> "3",
+                    "first_name"=> "ShockByte",
+                    "last_name"=> "",
+                    "nickname"=> "",
+                    "sex"=> 1,
+                    "bdate"=> "23.11.2000",
+                    "country"=> 1,
+                    "city"=> 1,
+                    "timezone"=> 1,
+                    "photo"=> "",
+                    "photo_medium"=> "",
+                    "photo_big"=> "",
+                    "has_mobile"=> 1,
                 ]
             ]
         ];

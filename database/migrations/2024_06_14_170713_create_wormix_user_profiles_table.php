@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('wormix_user_profiles', function (Blueprint $table) {
             $table->bigInteger('user_id')->unsigned();
 
-            $table->integer('money')->unsigned()->default(0)->comment('fuses');
-            $table->integer('real_money')->unsigned()->default(0)->comment('rubies');
+            $table->integer('money')->unsigned()->default(450)->comment('fuses');
+            $table->integer('real_money')->unsigned()->default(3)->comment('rubies');
 
             $table->integer('rating')->unsigned()->default(0)->comment('user rating');
             $table->integer('reaction_rate')->unsigned()->default(0)->comment('user reaction rate');

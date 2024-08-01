@@ -20,16 +20,8 @@ return new class extends Migration
                 ->comment('User login');
 
 
-            $table->string('email', 100)
-                ->unique('i_email_index')
-                ->comment('User email');
-
             $table->string('password', 64)
                 ->comment('User password');
-
-            $table->boolean('is_staff')
-                ->default(false)
-                ->comment('This user is staff');
 
             $table->timestamps();
         });
