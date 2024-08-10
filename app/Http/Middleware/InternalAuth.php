@@ -36,6 +36,7 @@ class InternalAuth
             return $this->error();
         }
 
+        $request->json()->add(['internal_user_id' => (int)$auth_key[0]]);
         return $next($request);
     }
 
