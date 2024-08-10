@@ -12,8 +12,8 @@ class EnterAccount extends JsonResource
 
     public function __construct($resource, $session_key)
     {
-        parent::__construct($resource);
         $this->session_key = $session_key;
+        return parent::__construct($resource);
     }
     public function toArray(Request $request): array
     {
