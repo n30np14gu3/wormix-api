@@ -25,9 +25,12 @@ return new class extends Migration
             $table->integer('real_price')->unsigned()->default(0);
 
             $table->boolean('infinity')->default(0);
+            $table->boolean('one_day')->default(0);
 
             $table->integer('required_friends')->unsigned()->default(0);
             $table->integer('required_level')->unsigned()->default(0);
+            $table->integer('required_rating')->unsigned()->default(0);
+
             $table->timestamps();
         });
 

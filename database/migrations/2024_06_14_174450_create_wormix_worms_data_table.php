@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_worms_data', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('owner_id')->unsigned();
 
             $table->smallInteger('armor')->default(1);

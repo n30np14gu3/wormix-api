@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int owner_id
  * @property int weapon_id
  * @property int count
+ * @property int expire_at
  */
 class UserWeapon extends Model
 {

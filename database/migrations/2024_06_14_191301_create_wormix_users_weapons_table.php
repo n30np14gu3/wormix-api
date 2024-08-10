@@ -16,6 +16,7 @@ return new class extends Migration
             $table->bigInteger('owner_id')->unsigned();
             $table->bigInteger('weapon_id')->unsigned();
             $table->integer('count')->default(-1);
+            $table->integer('expire_at')->default(-1);
             $table->timestamps();
         });
 

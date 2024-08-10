@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_user_profiles', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('user_id')->unsigned();
 
             $table->integer('money')->unsigned()->default(450)->comment('fuses');
@@ -19,6 +20,7 @@ return new class extends Migration
 
             $table->integer('rating')->unsigned()->default(0)->comment('user rating');
             $table->integer('reaction_rate')->unsigned()->default(0)->comment('user reaction rate');
+
             $table->timestamps();
         });
         Schema::table('wormix_user_profiles', function (Blueprint $table) {

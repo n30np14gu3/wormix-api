@@ -20,7 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
-            'auth' => \App\Http\Middleware\ApiAuth::class
+            'auth' => \App\Http\Middleware\ApiAuth::class,
+            'internal-auth' => \App\Http\Middleware\InternalAuth::class,
+            'internal-request' => \App\Http\Middleware\InternalRequest::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

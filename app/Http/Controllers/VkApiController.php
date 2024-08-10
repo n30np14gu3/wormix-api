@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VkApiRequest;
+use App\Http\Resources\Vk\VkProfile;
 use App\Models\User;
+use App\Models\UserSocialData;
 
 class VkApiController extends Controller
 {
@@ -23,7 +25,6 @@ class VkApiController extends Controller
         ];
     }
 
-    //TODO: implement via DB
     private function getAppFriends()
     {
         return [
@@ -31,57 +32,10 @@ class VkApiController extends Controller
         ];
     }
 
-    //TODO: implement via DB
     private function getProfiles()
     {
         return [
-            'response' => [
-                [
-                    "uid"=> "1",
-                    "first_name"=> "ShockByte",
-                    "last_name"=> "",
-                    "nickname"=> "",
-                    "sex"=> 1,
-                    "bdate"=> "23.11.2000",
-                    "country"=> 1,
-                    "city"=> 1,
-                    "timezone"=> 1,
-                    "photo"=> "",
-                    "photo_medium"=> "",
-                    "photo_big"=> "",
-                    "has_mobile"=> 1,
-                ],
-                [
-                    "uid"=> "2",
-                    "first_name"=> "ShockByte",
-                    "last_name"=> "",
-                    "nickname"=> "",
-                    "sex"=> 1,
-                    "bdate"=> "23.11.2000",
-                    "country"=> 1,
-                    "city"=> 1,
-                    "timezone"=> 1,
-                    "photo"=> "",
-                    "photo_medium"=> "",
-                    "photo_big"=> "",
-                    "has_mobile"=> 1,
-                ],
-                [
-                    "uid"=> "3",
-                    "first_name"=> "ShockByte",
-                    "last_name"=> "",
-                    "nickname"=> "",
-                    "sex"=> 1,
-                    "bdate"=> "23.11.2000",
-                    "country"=> 1,
-                    "city"=> 1,
-                    "timezone"=> 1,
-                    "photo"=> "",
-                    "photo_medium"=> "",
-                    "photo_big"=> "",
-                    "has_mobile"=> 1,
-                ]
-            ]
+            'response' => VkProfile::collection(UserSocialData::all())
         ];
     }
 }
