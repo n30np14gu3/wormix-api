@@ -10,12 +10,6 @@ class EnterAccount extends JsonResource
 {
     private string $session_key;
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-
     public function __construct($resource, $session_key)
     {
         parent::__construct($resource);
