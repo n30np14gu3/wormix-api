@@ -29,8 +29,6 @@ class InternalLoginController extends Controller
             }
             else{
 
-                $user = $session->getSessionUser();
-
                 $old_session =  $session->getTcpSession();
                 $session->setTcpSession($request->json('tcp_session'));
                 Event::dispatch(new InternalLoginEvent($session->getSessionUser()));
@@ -38,7 +36,7 @@ class InternalLoginController extends Controller
                 return [
                     'type' => 'EnterAccount',
                     'old_session' => $old_session,
-                    'data' => new  EnterAccount($session->getSessionUser(), $session->setSessionKey())
+                    'data' => new  EnterAccount($session->getSessionUser(), $request->json('Id').'.'.$session->setSessionKey())
                 ];
             }
         }catch (\Exception $ex){

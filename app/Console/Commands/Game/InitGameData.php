@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Game;
 
 use App\Models\Wormix\DailyBonus;
+use App\Models\Wormix\Race;
 use App\Models\Wormix\Weapon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -33,11 +34,13 @@ class InitGameData extends Command
         $this->info('Parsing strings from items_messages_ru.xml');
         $this->info('Parsing hats from hats.json');
         $this->info('Parsing gifts from gifts.json');
+        $this->info('Parsing races from races.json');
 
         $weapons_path = resource_path('game/weapons.json');
         $items_messages_path = resource_path('game/items.messages_ru.xml');
         $hats_path = resource_path('game/hats.json');
         $gifts_path = resource_path('game/gifts.json');
+        $races_path = resource_path('game/races.json');
 
         if(!File::exists($weapons_path)){
             $this->error("Can't find weapons.json in resources");
@@ -63,8 +66,14 @@ class InitGameData extends Command
             return;
         }
 
+        if(!File::exists($gifts_path)){
+            $this->error("Can't find races.json in resources");
+            return;
+        }
+
         $weapons_array = json_decode(file_get_contents($weapons_path), true);
         $hats_array = json_decode(file_get_contents($hats_path), true);
+        $races_array = json_decode(file_get_contents($races_path), true);
         $messages_array = simplexml_load_file($items_messages_path);
         $gifts_array = json_decode(file_get_contents($gifts_path), true);
 
@@ -131,6 +140,19 @@ class InitGameData extends Command
                 'random_gift' => $gift['random']
             ]);
             $this->info('Gift added for sequence '.$gift['sequence']);
+        }
+
+        foreach($races_array as $race){
+            Race::insert([
+                'race_id' => $race['raceId'],
+                'race_name' => $race['configName'],
+
+                'price' => $race['price'],
+                'real_price' => $race['realPrice'],
+
+                'required_level' => $race['requiredLevel'],
+            ]);
+            $this->info('Saved new race '.$race['configName']);
         }
     }
 }

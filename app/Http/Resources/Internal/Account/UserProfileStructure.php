@@ -32,7 +32,7 @@ class UserProfileStructure extends JsonResource
 
             'Recipes' => [],
 
-            'Stuff' => []
+            'Stuff' => $this->weapons()->where('weapon_id', '>', 1000)->get()->pluck('weapon_id')
         ];
     }
 }
