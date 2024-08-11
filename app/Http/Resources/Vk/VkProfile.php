@@ -14,11 +14,12 @@ class VkProfile extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $photo_path = $this->nickname === "bot" ? "bot" : "users";
         return [
             "uid" => (string)$this->user_id,
 
             "first_name" => $this->first_name,
-            "last_name" => "",
+            "last_name" => $this->last_name === null ? "" : $this->last_name,
             "nickname" => "",
 
             "sex"=> 1,
@@ -28,9 +29,9 @@ class VkProfile extends JsonResource
             "timezone"=> 1,
 
             //Complete xDDD
-            "photo"=> "",
-            "photo_medium"=> "",
-            "photo_big"=> "",
+            "photo"=> $this->photo === null ? "": url("api/photos/{$photo_path}/{$this->photo}"),
+            "photo_medium"=> $this->photo === null ? "": url("api/photos/{$photo_path}/{$this->photo}"),
+            "photo_big"=> $this->photo === null ? "": url("api/photos/{$photo_path}/{$this->photo}"),
 
             "has_mobile"=> 1,
         ];

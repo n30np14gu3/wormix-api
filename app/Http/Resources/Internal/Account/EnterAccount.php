@@ -24,7 +24,7 @@ class EnterAccount extends JsonResource
             'UserProfileStructures' => UserProfileStructure::collection(UserProfile::query()->where('user_id', '!=', $this->id)->get()),
 
             'AvailableSearchKeys' => 0,
-            'Friends' => 0,
+            'Friends' => UserProfile::query()->where('user_id', '!=', $this->id)->count(),
             'OnlineFriends' => 0,
             'IsBonusDay' => false,
 
