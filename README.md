@@ -8,6 +8,12 @@ php artisan migrate
 php artisan game:init
 ```
 
+## Base configuration
+Base configuration is [wormix.php](./config/wormix.php)
+
+## Api documentation
+Postman API file is [wormix.postman_collection.json](./resources/api/wormix.postman_collection.json)
+
 ## Files in resources/game
 * [gifts.json](./resources/game/gifts.json) - login sequence gifts
 * [hats.json ](./resources/game/gifts.json)- array of game hats
