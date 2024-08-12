@@ -10,10 +10,10 @@ class FileController extends Controller
 {
     public function getPhoto($photo, $name)
     {
-        Log::debug("Request photo", [
-            'storage' => $photo,
-            'name' => $name
-        ]);
+//        Log::debug("Request photo", [
+//            'storage' => $photo,
+//            'name' => $name
+//        ]);
 
         $full_path = "";
         switch (strtolower($photo)){

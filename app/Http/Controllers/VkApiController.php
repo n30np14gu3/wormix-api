@@ -10,12 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class VkApiController extends Controller
 {
     public function handleRequest(VkApiRequest $request){
-        Log::debug("VK_API_REQUEST", $request->toArray());
+        //Log::debug("VK_API_REQUEST", $request->toArray());
         return match ($request->post('method')) {
             'getUserSettings' => $this->getUserSettings(),
             'getAppFriends' => $this->getAppFriends(),
@@ -41,7 +40,6 @@ class VkApiController extends Controller
     private function getProfiles(Request $request)
     {
         $uids_array = json_decode($request->post('uids'), true);
-        Log::debug("UIDS", $uids_array);
         $is_bots = false;
 
         foreach ($uids_array as $uid) {
@@ -75,11 +73,8 @@ class VkApiController extends Controller
 
             if(File::exists(resource_path('images/bots'))){
                 $file_list = File::files(resource_path('images/bots'));
-                $file_names = [];
-                foreach($file_list as $file){
-                    $file_names[] = $file->getFilename();
-                }
-                $bot_profile->photo = $file_names[array_rand($file_names)];
+                if(count($file_list) !== 0)
+                    $bot_profile->photo = $file_list[array_rand($file_list)]->getFilename();
             }
             $profiles->add($bot_profile);
         }

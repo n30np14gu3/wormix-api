@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('wormix_users_battle_info', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
+
             $table->integer('battles_count')->unsigned()->default(10);
-            $table->integer('last_battle_time')->unsigned()->default(0);
+
             $table->integer('mission_id')->default(-2);
+
+            $table->integer('last_bott_fight_time')->unsigned()->default(0);
+            $table->integer('last_battle_time')->unsigned()->default(0);
             $table->timestamps();
         });
 

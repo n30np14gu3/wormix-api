@@ -2,9 +2,7 @@
 
 namespace App\Helpers\Wormix;
 
-use App\Http\Resources\Internal\Account\WeaponRecordList;
 use App\Models\Wormix\Race;
-use App\Models\Wormix\UserWeapon;
 use App\Models\Wormix\Weapon;
 use App\Models\Wormix\WormData;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,11 +11,6 @@ use Illuminate\Support\Facades\Log;
 class WormixBotHelper
 {
     public const BOT_BASE = -1000;
-
-    public static function GenerateBotInfo()
-    {
-        return Collection::empty();
-    }
 
     public static function GenerateBots(WormData $userWorm)
     {
@@ -38,13 +31,13 @@ class WormixBotHelper
             ->pluck('id')
             ->toArray();
 
-        Log::debug("STUFF", $random_stuff);
+        //Log::debug("STUFF", $random_stuff);
 
         $random_race = Race::query()
             ->where('required_level', '<=', $userWorm->level)
             ->get()->pluck('race_id')->toArray();
 
-        Log::debug("RACE", $random_race);
+        //Log::debug("RACE", $random_race);
 
         $bots = Collection::empty();
         for($i = 0; $i < 4; $i++){

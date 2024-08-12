@@ -25,7 +25,7 @@ class ArenaResult extends JsonResource
             ),
             'BattlesCount' => $this->battles_count,
             'CurrentMission' => $this->mission_id,
-            'BossAvailable' => true
+            'BossAvailable' => time() - $this->last_bott_fight_time > 24 * 60 * 60,
         ];
     }
 }

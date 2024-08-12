@@ -21,11 +21,14 @@ class UserObserver
         //Create user profile
         $user_profile = new UserProfile();
         $user_profile->user_id = $user->id;
+        $user_profile->money = config('wormix.starter.money');
+        $user_profile->real_money = config('wormix.starter.real_money');
         $user_profile->save();
 
         //Create user worm data
         $worm_data = new WormData();
         $worm_data->owner_id = $user->id;
+        $worm_data->hat = config('wormix.starter.race');
         $worm_data->save();
 
         //Create user social data
@@ -37,11 +40,14 @@ class UserObserver
         //Create user battle info
         $battle_info = new UserBattleInfo();
         $battle_info->user_id = $user->id;
+        $battle_info->battles_count = config('wormix.starter.missions');
         $battle_info->save();
 
         //Create user login sequence info
         $login_sequence = new LoginSequence();
         $login_sequence->user_id = $user->id;
+        $login_sequence->last_login = date("Y-m-d");
+        $login_sequence->gift_accepted = 1;
         $login_sequence->save();
 
         //Add starter user weapons

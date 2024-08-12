@@ -119,4 +119,5 @@ class ShopController extends Controller
 
         return new ChangeRaceResult(Collection::empty(), ChangeRaceResult::Success);
     }
+
 }
