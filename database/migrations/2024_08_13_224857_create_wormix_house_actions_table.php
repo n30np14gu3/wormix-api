@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wormix_reagents', function (Blueprint $table) {
+        Schema::create('wormix_house_actions', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('reagent_id')->unsigned()->unique('reagent_idx');
-            $table->string('name', 100)->nullable();
-            $table->bigInteger('reagent_price')->default(0);
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('to_user_id')->constrained('users');
+            $table->tinyInteger('action_type')->default(0)->comment('0: pump reaction, 1: search house');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wormix_reagents');
+        Schema::dropIfExists('house_actions');
     }
 };

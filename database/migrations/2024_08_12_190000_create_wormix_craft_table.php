@@ -13,7 +13,20 @@ return new class extends Migration
     {
         Schema::create('wormix_craft', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('internal_id')->unsigned()->unique('internal_idx');
+            $table->bigInteger('upgrade_id')->unsigned()->unique('upgrade_idx');
+            $table->bigInteger('prev_upgrade_id')->unsigned()->nullable();
+            $table->integer('required_leve')->default(1);
+            $table->integer('level');
+            $table->json('reagents');
             $table->timestamps();
+        });
+
+        Schema::table('wormix_craft', function (Blueprint $table) {
+            $table->foreign('prev_upgrade_id')
+                ->references('upgrade_id')
+                ->on('wormix_craft')
+                ->cascadeOnDelete();
         });
     }
 

@@ -47,12 +47,6 @@ class ShopController extends Controller
             if($user_profile->money < $sum || $user_profile->real_money < $realSum)
                 return new ShopResult(Collection::empty(), ShopResult::NotEnoughMoney);
 
-            Log::debug("Spending", [
-                'user_id' => $request->json('internal_user_id'),
-                'money' => $sum,
-                'real_money' => $realSum
-            ]);
-
             $user_profile->money -= $sum;
             $user_profile->real_money -= $realSum;
             $user_profile->save();
@@ -72,7 +66,11 @@ class ShopController extends Controller
                     $new_weapons->add($user_weapon);
                 }
                 else{
-                    $old_weapon->count += $item['Count'];
+                    if($old_weapon->weapon->infinity)
+                        $old_weapon->count = $item['Count'];
+                    else
+                        $old_weapon->count += $item['Count'];
+
                     $old_weapon->save();
 
                     $old_weapon->count = $item['Count'];
@@ -107,7 +105,7 @@ class ShopController extends Controller
             return new ChangeRaceResult(Collection::empty(), ChangeRaceResult::MinRequirementsError);
 
 
-        $user_worm->hat = WormixTrashHelper::getHatByRaceAndHatIds($request->json('RaceId'), $raceAndHats[1]);
+        $user_worm->hat = WormixTrashHelper::getHatByRaceAndHatIds($raceAndHats[1], $request->json('RaceId'));
         $user_worm->save();
 
         if($request->json('MoneyType') === 0)
@@ -118,6 +116,21 @@ class ShopController extends Controller
         $user_profile->save();
 
         return new ChangeRaceResult(Collection::empty(), ChangeRaceResult::Success);
+    }
+
+    public function unlockMission()
+    {
+
+    }
+
+    public function buyReaction()
+    {
+
+    }
+
+    public function buyBattle()
+    {
+
     }
 
 }

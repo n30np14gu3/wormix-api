@@ -28,7 +28,7 @@ class FileController extends Controller
         }
 
         if(!File::exists($full_path))
-            $full_path == resource_path("images/default.png");
+            $full_path = resource_path("images/default.png");
 
         $file = File::get($full_path);
         $type = File::mimeType($full_path);

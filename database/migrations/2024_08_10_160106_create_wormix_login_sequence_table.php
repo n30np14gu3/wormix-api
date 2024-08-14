@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_login_sequence', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
             $table->date('last_login')->nullable();
 
             $table->smallInteger('bonus_type')->default(0);
@@ -23,10 +22,6 @@ return new class extends Migration
             $table->boolean('gift_accepted')->default(false);
 
             $table->timestamps();
-        });
-
-        Schema::table('wormix_login_sequence', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_worms_data', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('owner_id')->unsigned();
+            $table->foreignId('owner_id')->primary()->constrained('users')->cascadeOnDelete();
 
             $table->smallInteger('armor')->default(1);
             $table->smallInteger('attack')->default(1);
@@ -24,10 +23,6 @@ return new class extends Migration
             $table->smallInteger('hat')->default(0);
 
             $table->timestamps();
-        });
-
-        Schema::table('wormix_worms_data', function (Blueprint $table) {
-            $table->foreign('owner_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

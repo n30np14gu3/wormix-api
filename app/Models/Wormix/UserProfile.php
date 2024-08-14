@@ -21,6 +21,8 @@ class UserProfile extends Model
 {
     protected $table = 'wormix_user_profiles';
 
+    protected $primaryKey = 'user_id';
+
     public function weapons() : HasMany
     {
         return $this->hasMany(UserWeapon::class, 'owner_id', 'user_id');

@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('wormix_missions', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('mission_id')->unique('mission_idx');
+            $table->json('awards');
             $table->timestamps();
         });
     }

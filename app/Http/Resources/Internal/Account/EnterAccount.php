@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Internal\Account;
 
+use App\Helpers\Wormix\WormixTrashHelper;
 use App\Models\Wormix\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,13 +24,13 @@ class EnterAccount extends JsonResource
 
             'UserProfileStructures' => UserProfileStructure::collection(UserProfile::query()->where('user_id', '!=', $this->id)->get()),
 
-            'AvailableSearchKeys' => 0,
+            'AvailableSearchKeys' => WormixTrashHelper::getSearchKeys($this->id),
+
             'Friends' => UserProfile::query()->where('user_id', '!=', $this->id)->count(),
             'OnlineFriends' => 0,
             'IsBonusDay' => false,
 
             'DailyBonusStructure' => new DailyBonusStructure($this->login_sequence),
-
             'Reagents' => [],
 
             'SessionKey' => $this->session_key

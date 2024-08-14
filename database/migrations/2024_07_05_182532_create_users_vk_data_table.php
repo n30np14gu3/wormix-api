@@ -12,16 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users_vk_data', function (Blueprint $table) {
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
             $table->string('first_name', 30)->nullable();
             $table->string('last_name', 30)->nullable();
             $table->string('nickname', 30)->nullable();
             $table->string('photo', 256)->nullable();
             $table->timestamps();
-        });
-
-        Schema::table('users_vk_data', function (Blueprint $table) {
-           $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

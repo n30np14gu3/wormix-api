@@ -13,19 +13,20 @@ return new class extends Migration
     {
         Schema::create('wormix_users_battle_info', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+
 
             $table->integer('battles_count')->unsigned()->default(10);
 
-            $table->integer('mission_id')->default(-2);
+            $table->json('awards')->nullable();
+            $table->bigInteger('current_battle_id')->default(0);
+            $table->enum('battle_type', [0,1, 2])->default(0)->comment('0: default battle, 1: mission, 2: PvP');
 
-            $table->integer('last_bott_fight_time')->unsigned()->default(0);
+            $table->integer('mission_id')->default(-1);
+
+            $table->integer('last_boss_fight_time')->unsigned()->default(0);
             $table->integer('last_battle_time')->unsigned()->default(0);
             $table->timestamps();
-        });
-
-        Schema::table('wormix_users_battle_info', function (Blueprint $table) {
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Wormix\HouseAction;
 use App\Models\Wormix\LoginSequence;
 use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserProfile;
 use App\Models\Wormix\WormData;
 use App\Observers\UserObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -65,5 +67,10 @@ class User extends Authenticatable
     public function login_sequence() : HasOne
     {
         return $this->hasOne(LoginSequence::class, 'user_id', 'id');
+    }
+
+    public function house_actions() : HasMany
+    {
+        return $this->hasMany(HouseAction::class, 'to_user_id', 'id');
     }
 }

@@ -46,4 +46,10 @@ class InternalAccountController extends Controller
         ];
 
     }
+
+
+    public function contributeStats()
+    {
+
+    }
 }

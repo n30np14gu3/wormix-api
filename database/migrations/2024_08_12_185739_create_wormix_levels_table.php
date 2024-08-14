@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('wormix_levels', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('required_experience')->default(0);
-            $table->bigInteger('money_award')->default(0);
-            $table->bigInteger('real_money_award')->default(0);
+            $table->unsignedInteger('max_worms_count')->default(1);
             $table->json('awards')->nullable();
             $table->timestamps();
         });

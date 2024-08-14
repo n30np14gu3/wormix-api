@@ -3,7 +3,9 @@
 namespace App\Console\Commands\Game;
 
 use App\Models\Wormix\DailyBonus;
+use App\Models\Wormix\Level;
 use App\Models\Wormix\Race;
+use App\Models\Wormix\Reagent;
 use App\Models\Wormix\Weapon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -227,6 +229,64 @@ class InitGameData extends Command
         }
     }
 
+    private function parseLevelAwards():void
+    {
+        $this->info('Parsing levels awards from level_awards.json');
+
+        $levels_path = resource_path('game/level_awards.json');
+
+        if(!File::exists($levels_path)){
+            $this->error("Can't find weapons_start.json in resources");
+            return;
+        }
+
+        $levels = json_decode(file_get_contents($levels_path), true);
+        foreach($levels as $level){
+            try{
+                DB::beginTransaction();
+                Level::insert([
+                    'required_experience' => $level['required_experience'],
+                    'max_worms_count' => $level['max_worms_count'],
+                    'awards' => json_encode($level['reward_weapons']),
+                ]);
+                DB::commit();
+                $this->info("Added new level {$level['level']}");
+            }catch (\Exception $ex){
+                DB::rollBack();
+                $this->error("Error in {$level['level']}: {$ex->getMessage()}");
+            }
+        }
+    }
+
+    private function parseReagents()
+    {
+        $this->info('Parsing reagents config from reagents.json');
+
+        $reagents_path = resource_path('game/reagents.json');
+
+        if(!File::exists($reagents_path)){
+            $this->error("Can't find weapons_start.json in resources");
+            return;
+        }
+
+        $reagents = json_decode(file_get_contents($reagents_path), true);
+        foreach($reagents as $reagent){
+            try{
+                DB::beginTransaction();
+                Reagent::insert([
+                    'reagent_id' => $reagent['id'],
+                    'name' => $reagent['name'],
+                    'reagent_price' => $reagent['price'],
+                ]);
+                DB::commit();
+                $this->info("Added new reagent {$reagent['id']}");
+            }catch (\Exception $ex){
+                DB::rollBack();
+                $this->error("Error in reagent {$reagent['id']}: {$ex->getMessage()}");
+            }
+        }
+    }
+
     /**
      * Execute the console command.
      */
@@ -241,6 +301,10 @@ class InitGameData extends Command
         $this->parseGifts();
 
         $this->parseRaces();
+
+        $this->parseLevelAwards();
+
+        $this->parseReagents();
 
         $this->info('SETUP IS COMPLETED');
     }

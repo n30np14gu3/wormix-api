@@ -10,6 +10,11 @@ return [
         'missions' => [
             'delay' => 120,
             'max' => 5
+        ],
+        'search_keys_per_day' => 10,
+        'next_level_award' => [
+            'money' => 150,
+            'real_money' => 0,
         ]
     ]
 ];
