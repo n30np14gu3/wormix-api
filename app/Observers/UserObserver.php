@@ -7,6 +7,7 @@ use App\Models\UserSocialData;
 use App\Models\Wormix\LoginSequence;
 use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserProfile;
+use App\Models\Wormix\UserTeam;
 use App\Models\Wormix\UserWeapon;
 use App\Models\Wormix\Weapon;
 use App\Models\Wormix\WormData;
@@ -30,6 +31,12 @@ class UserObserver
         $worm_data->owner_id = $user->id;
         $worm_data->hat = config('wormix.starter.race');
         $worm_data->save();
+
+        //Create user default teammate
+        $teammate = new UserTeam();
+        $teammate->user_id = $user->id;
+        $teammate->teammate_id = $user->id;
+        $teammate->save();
 
         //Create user social data
         $social_data = new UserSocialData();

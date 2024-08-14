@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property HasMany weapons
  * @property User user
+ * @property HasMany teammates
  */
 class UserProfile extends Model
 {
@@ -31,5 +32,10 @@ class UserProfile extends Model
     public function user() : BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function teammates() : HasMany
+    {
+        return $this->hasMany(UserTeam::class, 'user_id', 'user_id');
     }
 }

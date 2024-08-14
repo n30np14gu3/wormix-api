@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int id
  * @property int user_id
  *
  * @property string last_login
@@ -24,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class LoginSequence extends Model
 {
     protected $table = 'wormix_login_sequence';
+
+    protected $primaryKey = 'user_id';
 
     protected $fillable = [
         'last_login',

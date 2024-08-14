@@ -38,7 +38,7 @@ class WormixTrashHelper
      */
     public static function getHatByRaceAndHatIds(int $hatId, int $raceId) : int
     {
-        return $raceId * self::RACE_BASE + $hatId;
+        return $hatId === 0 ? $raceId : ($raceId * self::RACE_BASE + $hatId);
     }
 
     /**

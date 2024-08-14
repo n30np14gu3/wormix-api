@@ -26,9 +26,7 @@ class UserProfileStructure extends JsonResource
 
             'WeaponRecordList' => WeaponRecordList::collection($this->weapons),
 
-            'WormsGroup' => [
-                new WormStructure($this->user->worm_data)
-            ],
+            'WormsGroup' => WormStructure::collection($this->teammates()->orderBy('order')->get()),
 
             'Recipes' => [],
 
