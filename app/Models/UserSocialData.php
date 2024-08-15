@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 class UserSocialData extends Model
 {
     protected $table = 'users_vk_data';
+
+    protected $primaryKey = 'user_id';
+
     protected $fillable = [
         'first_name',
         'last_name',

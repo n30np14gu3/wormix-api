@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Internal\Account;
 
+use App\Helpers\Wormix\WormixBotHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,8 +19,9 @@ class WormStructure extends JsonResource
         $attack = $this->teammate->attack;
         $level = $this->teammate->level;
 
+
         if($this->user_id !== $this->teammate_id && $this->owner->level !== $this->teammate->level){
-            $newPoints = $this->stripData($level, $this->owner->level, $armor, $attack);
+            $newPoints =  WormixBotHelper::stripData($level, $this->owner->level, $armor, $attack);
             $level = $this->owner->level;
             $armor = $newPoints['armor'];
             $attack = $newPoints['attack'];
@@ -34,29 +36,6 @@ class WormStructure extends JsonResource
             'Experience' => $this->teammate->experience,
             'Level' => $level,
             'Hat' => $this->teammate->hat
-        ];
-    }
-
-    private function stripData(
-        int $level,
-        int $toLevel,
-        int $armor,
-        int $attack
-    )
-    {
-        $levelPoints = $level * 2;
-        $toLevelPoints = $toLevel * 2;
-
-        if($armor + $attack < $levelPoints)
-            $armor += $levelPoints - ($armor + $attack);
-
-
-        $armorPoints = (int)(($armor / $levelPoints) * $toLevelPoints);
-        $attackPoints = $toLevelPoints - $armorPoints;
-
-        return [
-            'armor' => $armorPoints,
-            'attack' => $attackPoints
         ];
     }
 }

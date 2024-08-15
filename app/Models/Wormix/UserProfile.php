@@ -30,6 +30,13 @@ class UserProfile extends Model
         'reagents' => 'json'
     ];
 
+    protected $fillable = [
+        'money',
+        'real_money',
+        'rating',
+        'reaction_rate'
+    ];
+
     public function weapons() : HasMany
     {
         return $this->hasMany(UserWeapon::class, 'owner_id', 'user_id');

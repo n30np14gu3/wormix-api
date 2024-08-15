@@ -30,6 +30,12 @@ class WormData extends Model
 
     protected $primaryKey = 'owner_id';
 
+    protected $fillable = [
+        'level',
+        'armor',
+        'attack'
+    ];
+
     public function owner() : BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id', 'id');

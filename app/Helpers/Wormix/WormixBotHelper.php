@@ -86,4 +86,27 @@ class WormixBotHelper
         }
         return $bots;
     }
+
+    public static function stripData(
+        int $level,
+        int $toLevel,
+        int $armor,
+        int $attack
+    )
+    {
+        $levelPoints = $level * 2;
+        $toLevelPoints = $toLevel * 2;
+
+        if($armor + $attack < $levelPoints)
+            $armor += $levelPoints - ($armor + $attack);
+
+
+        $armorPoints = (int)(($armor / $levelPoints) * $toLevelPoints);
+        $attackPoints = $toLevelPoints - $armorPoints;
+
+        return [
+            'armor' => $armorPoints,
+            'attack' => $attackPoints
+        ];
+    }
 }

@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     private function respondWithToken(User $user){
-        $auth_token = $user->createToken('auth_token-'.$user->id)->plainTextToken;
+        $new_token = $user->createToken('auth_token-'.$user->id);
+        $user->tokens()->where('id', '!=', $new_token->accessToken->id)->delete();
+
         return response()->json([
-            'auth_token' => $auth_token,
+            'auth_token' => $new_token->plainTextToken,
             'id' => $user->id,
         ]);
     }
@@ -22,7 +24,9 @@ class AuthController extends Controller
     {
         $user = User::query()->where('login', $request->json('login'))->get()->first();
         if(!Hash::check($request->json('password'), $user->password))
-            abort(403);
+            return response([
+                'message' => 'Access Denied'
+            ], 403);
 
         return $this->respondWithToken($user);
     }

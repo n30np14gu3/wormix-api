@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('', [AccountController::class, 'getAccount']);
     Route::post('', [AccountController::class, 'updateAccount']);
-    Route::get('info/{user_login}', [AccountController::class, 'getAccountInfo']);
+    Route::post('update_photo', [AccountController::class, 'updateAccountPhoto']);
+    Route::get('info/{user}', [AccountController::class, 'getAccountInfo']);
     Route::post('game', [AccountController::class, 'startGame']);
 });
