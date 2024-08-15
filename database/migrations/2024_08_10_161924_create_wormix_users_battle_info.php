@@ -12,17 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_users_battle_info', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->primary()->constrained('users')->cascadeOnDelete();
 
 
             $table->integer('battles_count')->unsigned()->default(10);
 
             $table->json('awards')->nullable();
             $table->bigInteger('current_battle_id')->default(0);
-            $table->enum('battle_type', [0,1, 2])->default(0)->comment('0: default battle, 1: mission, 2: PvP');
+            $table->tinyInteger('battle_type')->default(0)->comment('0: default battle, 1: mission, 2: PvP');
 
-            $table->integer('mission_id')->default(-1);
+            $table->integer('mission_id')->default(0);
 
             $table->integer('last_boss_fight_time')->unsigned()->default(0);
             $table->integer('last_battle_time')->unsigned()->default(0);

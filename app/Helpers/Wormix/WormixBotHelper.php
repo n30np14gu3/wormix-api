@@ -36,15 +36,17 @@ class WormixBotHelper
 
         $bots = Collection::empty();
 
-        for($i = 0; $i < 4; $i++){
+        $bots_count = ($userWorm->level >= 5 || $userWorm->owner->battle_info->mission_id > 0) ? 6 : 4;
+
+        for($i = 0; $i < $bots_count; $i++){
             $worm_group = [];
             $random_level = rand(
                 max(1, $userWorm->level - 1),
                 min($userWorm->level + 1, 30)
             );
 
-            $level = Level::query()->where('level', $random_level)->get()->first();
-            $random_worms_count = min(max(1, rand($level->max_worms_count - 1, $level->max_worms_count + 1)), 4);
+            $level = Level::query()->where('id', $random_level)->get()->first();
+            $random_worms_count = rand(1, $level->max_worms_count);
 
             for($j = 0; $j < $random_worms_count; $j++){
 

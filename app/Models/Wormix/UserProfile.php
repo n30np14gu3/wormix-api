@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int rating
  * @property int reaction_rate
  *
+ * @property array reagents
+ *
  * @property HasMany weapons
  * @property User user
  * @property HasMany teammates
@@ -23,6 +25,10 @@ class UserProfile extends Model
     protected $table = 'wormix_user_profiles';
 
     protected $primaryKey = 'user_id';
+
+    protected $casts = [
+        'reagents' => 'json'
+    ];
 
     public function weapons() : HasMany
     {

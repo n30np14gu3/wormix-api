@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('rating')->unsigned()->default(0)->comment('user rating');
             $table->integer('reaction_rate')->unsigned()->default(0)->comment('user reaction rate');
 
+            $table->json('reagents')->default("[]")->comment('user reagents');
+
             $table->timestamps();
         });
     }

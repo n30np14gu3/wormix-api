@@ -31,7 +31,7 @@ class EnterAccount extends JsonResource
             'IsBonusDay' => false,
 
             'DailyBonusStructure' => new DailyBonusStructure($this->login_sequence),
-            'Reagents' => [],
+            'Reagents' => $this->user_profile->reagents,
 
             'SessionKey' => $this->session_key
         ];

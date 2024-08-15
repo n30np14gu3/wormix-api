@@ -3,6 +3,7 @@
 namespace App\Helpers\Wormix;
 
 use App\Models\Wormix\HouseAction;
+use App\Models\Wormix\UserProfile;
 
 class WormixTrashHelper
 {
@@ -71,5 +72,22 @@ class WormixTrashHelper
                 ->where('to_user_id', $to_user_id)
                 ->where('action_type', 1)
                 ->where('created_at', '>=', now()->subDay())->count() > 0;
+    }
+
+    public static function addReagents(UserProfile $profile, array $reagents)
+    {
+        if(count($reagents) > count($profile->reagents)){
+           $old_reagents  = $profile->reagents;
+           $profile->reagents = array_fill(0, count($reagents), 0);
+           for($i = 0; $i < count($old_reagents); $i++){
+               $profile->reagents[$i] = $old_reagents[$i];
+           }
+        }
+
+        for($i = 0; $i < count($reagents); $i++){
+            $profile->reagents[$reagents[$i]] += 1;
+        }
+
+        $profile->save();
     }
 }

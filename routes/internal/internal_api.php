@@ -37,6 +37,7 @@ Route::middleware(['internal-auth'])->group(function () {
     Route::prefix('game')->group(function (){
         Route::post('get_arena', [ArenaController::class, 'getArena']);
         Route::post('start_battle', [ArenaController::class, 'startBattle']);
+        Route::post('end_battle', [ArenaController::class, 'endBattle']);
     });
 
     Route::prefix('info')->group(function () {
