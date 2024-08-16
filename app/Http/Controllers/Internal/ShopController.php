@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Internal;
 
 use App\Helpers\Wormix\WormixTrashHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Internal\Shop\BuyBattleRequest;
 use App\Http\Requests\Internal\Shop\BuyReactionRateRequest;
 use App\Http\Requests\Internal\Shop\BuyShopItemsRequest;
 use App\Http\Requests\Internal\Shop\ChangeRaceRequest;
+use App\Http\Requests\Internal\Shop\UnlockMissionRequest;
+use App\Http\Resources\Internal\Shop\BuyBattleResult;
 use App\Http\Resources\Internal\Shop\BuyReactionRateResult;
 use App\Http\Resources\Internal\Shop\ChangeRaceResult;
 use App\Http\Resources\Internal\Shop\ShopResult;
 use App\Models\Wormix\Race;
+use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserProfile;
 use App\Models\Wormix\UserWeapon;
 use App\Models\Wormix\Weapon;
@@ -36,6 +40,10 @@ class ShopController extends Controller
             foreach(Weapon::query()->whereIn('id', array_keys($shopItems))->get() as $weapon){
                 if($weapon->hide_in_shop && $weapon->ref_id === null)
                     throw new \Exception("Attempt to buy hidden item!");
+
+                if(!$weapon->infinity && $shopItems["{$weapon->id}"]['Count'] === -1)
+                    return new ShopResult(Collection::empty(), ShopResult::Error);
+
                 if($shopItems["{$weapon->id}"]['MoneyType'] === 0){
                     if($weapon->real_price === 0)
                         return new ShopResult(Collection::empty(), ShopResult::Error);
@@ -55,12 +63,6 @@ class ShopController extends Controller
             if($user_profile->money < $sum || $user_profile->real_money < $realSum)
                 return new ShopResult(Collection::empty(), ShopResult::NotEnoughMoney);
 
-            Log::debug("Spend",
-                [
-                    'money' => $sum,
-                    'realSum' => $realSum
-                ]
-            );
             $user_profile->money -= $sum;
             $user_profile->real_money -= $realSum;
             $user_profile->save();
@@ -132,11 +134,6 @@ class ShopController extends Controller
         return new ChangeRaceResult(Collection::empty(), ChangeRaceResult::Success);
     }
 
-    public function unlockMission()
-    {
-
-    }
-
     public function buyReaction(BuyReactionRateRequest $request)
     {
         $user_profile = UserProfile::query()
@@ -161,7 +158,52 @@ class ShopController extends Controller
         ];
     }
 
-    public function buyBattle()
+    public function buyBattle(BuyBattleRequest $request)
+    {
+        $battle_info = UserBattleInfo::query()
+            ->where('user_id', $request->json('internal_user_id'))
+            ->get()
+            ->first();
+
+        $user_profile = UserProfile::query()
+            ->where('user_id', $request->json('internal_user_id'))
+            ->get()
+            ->first();
+
+        if($battle_info->battles_count >= config('wormix.game.missions.max'))
+            return [
+                'data' => new BuyBattleResult(Collection::empty(), BuyBattleResult::Error)
+            ];
+
+        if(
+            (
+                $request->json('MoneyType') === 0
+                && $user_profile->real_money < config('wormix.game.missions.buy.real_money')
+            )
+            || (
+                $request->json('MoneyType') === 1
+                && $user_profile->money < config('wormix.game.missions.buy.money')
+            )
+        )
+            return [
+                'data' => new BuyBattleResult(Collection::empty(), BuyBattleResult::NotEnoughMoney)
+            ];
+
+        $battle_info->battles_count += 1;
+        $battle_info->save();
+
+        if($request->json('MoneyType') === 0)
+            $user_profile->real_money -= config('wormix.game.missions.buy.real_money');
+        else
+            $user_profile->money -= config('wormix.game.missions.buy.money');
+
+        $user_profile->save();
+        return [
+            'data' => new BuyBattleResult(Collection::empty(), BuyBattleResult::Success)
+        ];
+    }
+
+    public function unlockMission(UnlockMissionRequest $request)
     {
 
     }

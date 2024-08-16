@@ -31,17 +31,15 @@ return [
                 'high' => [
                     'money' => 40,
                     'experience' => 12
-                ],
-
-
-                'buy' => [
-                    'money' => 100,
-                    'real_money' => 1,
                 ]
             ],
+
+            'buy' => [
+                'money' => 100,
+                'real_money' => 1,
+            ]
         ],
         'buy' => [
-            'reaction' => 1,
             'boss_mission' => 10,
             'reset_stats' => [
                 'money' => 300,
