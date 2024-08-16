@@ -44,8 +44,8 @@ return [
             'reaction' => 1,
             'boss_mission' => 10,
             'reset_stats' => [
-                'money' => 10,
-                'real_money' => 10,
+                'money' => 300,
+                'real_money' => 3,
             ],
             'teammate' => [
                 'money' => 10,
