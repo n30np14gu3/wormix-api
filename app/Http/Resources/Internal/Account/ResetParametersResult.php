@@ -16,6 +16,7 @@ class ResetParametersResult extends JsonResource
     public function __construct($resource, int $result)
     {
         $this->result = $result;
+        parent::__construct($resource);
     }
 
     /**
