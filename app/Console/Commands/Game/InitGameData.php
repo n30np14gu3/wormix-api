@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands\Game;
 
+use App\Models\Wormix\Craft;
 use App\Models\Wormix\DailyBonus;
 use App\Models\Wormix\Level;
+use App\Models\Wormix\Mission;
 use App\Models\Wormix\Race;
 use App\Models\Wormix\Reagent;
 use App\Models\Wormix\Weapon;
@@ -258,7 +260,65 @@ class InitGameData extends Command
         }
     }
 
-    private function parseReagents()
+    private function parseMissions():void
+    {
+        $this->info('Parsing missions awards from missions_awards.json');
+
+        $missions_path = resource_path('game/missions_awards.json');
+        if(!File::exists($missions_path)){
+            $this->error("Can't find missions_awards.json in resources");
+            return;
+        }
+
+        $missions = json_decode(file_get_contents($missions_path), true);
+        DB::beginTransaction();
+        try{
+            foreach($missions as $mission){
+                $m = new Mission();
+                $m->mission_id = $mission['id'];
+                $m->awards = $mission['awards'];
+                $m->required_level = $mission['required_level'];
+                $m->save();
+            }
+            DB::commit();
+        }catch (Exception $exception){
+            $this->error("Error while adding missions: {$exception->getMessage()}");
+            DB::rollBack();
+        }
+    }
+
+    private function parseCraft():void
+    {
+        $this->info('Parsing craft recipes from recipes.json');
+        $recipes_path = resource_path('game/recipes.json');
+        if(!File::exists($recipes_path)){
+            $this->error("Can't find recipes.json in resources");
+            return;
+        }
+
+        $recipes = json_decode(file_get_contents($recipes_path), true);
+        foreach($recipes as $recipe) {
+            try{
+                DB::beginTransaction();
+                $craft = new Craft();
+                $craft->id = $recipe['id'];
+                $craft->description = $recipe['description'];
+                $craft->upgrade_id = $recipe['upgradeId'];
+                $craft->prev_upgrade_id = @$recipe['prevUpgradeId'];
+                $craft->reagents = $recipe['reagents'];
+                $craft->level = $recipe['level'];
+                $craft->required_level = $recipe['requiredLevel'];
+                $craft->save();
+                DB::commit();
+                $this->info("Added recipe {$recipe['description']}");
+            }catch (Exception $exception){
+                DB::rollBack();
+                $this->error("Error in {$recipe['description']}: {$exception->getMessage()}");
+            }
+        }
+    }
+
+    private function parseReagents():void
     {
         $this->info('Parsing reagents config from reagents.json');
 
@@ -305,6 +365,10 @@ class InitGameData extends Command
         $this->parseLevelAwards();
 
         $this->parseReagents();
+
+        $this->parseMissions();
+
+        $this->parseCraft();
 
         $this->info('SETUP IS COMPLETED');
     }

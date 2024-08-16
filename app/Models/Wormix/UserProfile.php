@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int reaction_rate
  *
  * @property array reagents
+ * @property array recipes
  *
  * @property HasMany weapons
  * @property User user
@@ -27,7 +28,8 @@ class UserProfile extends Model
     protected $primaryKey = 'user_id';
 
     protected $casts = [
-        'reagents' => 'json'
+        'reagents' => 'array',
+        'recipes' => 'array'
     ];
 
     protected $fillable = [

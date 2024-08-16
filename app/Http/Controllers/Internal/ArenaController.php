@@ -9,11 +9,12 @@ use App\Http\Requests\Internal\Arena\GetArenaRequest;
 use App\Http\Requests\Internal\Arena\StartBattleRequest;
 use App\Http\Resources\Internal\Arena\ArenaLocked;
 use App\Http\Resources\Internal\Arena\ArenaResult;
+use App\Models\Wormix\Mission;
 use App\Models\Wormix\Reagent;
 use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserProfile;
+use App\Models\Wormix\UserWeapon;
 use App\Models\Wormix\WormData;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ArenaController extends Controller
@@ -59,7 +60,30 @@ class ArenaController extends Controller
             ->get()
             ->first();
 
+        if($request->json('MissionId') !== 0){
+            if(
+                //Check for bosses
+                ($request->json('MissionId') !== ($battle_info->last_mission_id + 1) && $battle_info->last_mission_id >= 0) ||
+
+                //Check for lessons
+                ($request->json('MissionId') !== ($battle_info->last_mission_id - 1) && $battle_info->last_mission_id < -1)
+            ){
+                return response([
+                    'message' => 'Try to start invalid mission'
+                ], 422);
+            }
+
+            $mission = Mission::query()->where('mission_id', $request->json('MissionId'))->get()->first();
+            $worm_data = WormData::query()->where('owner_id', $request->json('internal_user_id'))->get()->first();
+            if($worm_data->level < $mission->required_level){
+                return response([
+                    'message' => 'Mission required level mismatch'
+                ], 422);
+            }
+        }
+
         $battle_info->last_battle_time = time();
+
         if($request->json('MissionId') >= 0)
             $battle_info->battles_count -= 1;
 
@@ -69,14 +93,23 @@ class ArenaController extends Controller
         $reagents = [];
         srand(time());
 
-        if($request->json('MissionId') === 0)
+        if($request->json('MissionId') === 0) {
+            $battle_info->battle_type = 0;
+            $awards = [];
             $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 10))->toArray();
-        else
+        }
+        else{
             $battle_info->battle_type = 1;
+            $awards = Mission::query()
+                ->where('mission_id', $request->json('MissionId'))
+                ->get()
+                ->first()
+                ->awards;
+        }
 
-        $awards = [];
 
 
+        $battle_info->mission_id = $request->json('MissionId');
         $battle_info->awards = [
             'reagents' => $reagents,
             'awards'   => $awards
@@ -106,6 +139,15 @@ class ArenaController extends Controller
                 'request' => $request->json('BattleId'),
                 'current' => $battle_info->current_battle_id,
             ]);
+            return response([]);
+        }
+
+        if($request->json('MissionId') !== $battle_info->mission_id) {
+            Log::debug("Invalid mission id", [
+                'request' => $request->json('MissionId'),
+                'current' => $battle_info->mission_id,
+            ]);
+            return response([]);
         }
 
         $this->processBattleResult($request, $result, $battle_info);
@@ -119,44 +161,68 @@ class ArenaController extends Controller
         $wormData = WormData::query()->where('owner_id', $battleInfo->user_id)->get()->first();
         $user_info = UserProfile::query()->where('user_id', $battleInfo->user_id)->get()->first();
 
-        if($battleInfo->battle_type !== 1)
+        if($battleInfo->battle_type === 0)
             $wormData->experience += $request->json('ExpBonus');
 
+        //Decrease used weapons
+        foreach($request->json('Items') as $item){
+            if($item['Count'] <= 0)
+                continue;
+            $user_weapon = UserWeapon::query()
+                ->where('weapon_id', $item['Id'])
+                ->where('count', '!=', -1)
+                ->where('owner_id', $battleInfo->user_id)
+                ->get()->first();
+
+            $user_weapon->count -= $item['Count'];
+            if($user_weapon->count < 0)
+                $user_weapon->count = 0;
+            $user_weapon->save();
+        }
+
+        $mission = null;
+        $twiceRun = false;
+
         switch($result){
-            case 0:
-                //Draw (nothing)
+            case 0: //Draw
+                if($battleInfo->battle_type === 0){
+                    //TODO: complete draw
+                }
                 break;
             case 1: //Winner
                 if($battleInfo->battle_type === 1){
-                    Log::debug("TOTO MAKE BOT");
-                    if($battleInfo->mission_id <= -1){
-                        $battleInfo->mission_id -= 1;
-                    }elseif($battleInfo->mission_id == -3){
-                        $battleInfo->mission_id = 0;
+                    $mission = Mission::query()->where('mission_id', $battleInfo->mission_id)
+                        ->get()
+                        ->first();
+                    if($battleInfo->mission_id < 0) {
+                        $battleInfo->last_mission_id = $battleInfo->mission_id;
                     }
                     else{
-                        $battleInfo->mission_id += 1;
+                        $twiceRun = $battleInfo->mission_id - $battleInfo->last_mission_id <= 0;
+                        if(!$twiceRun){
+                            $battleInfo->last_mission_id = $battleInfo->mission_id;
+                        }
+                        $battleInfo->last_boss_fight_time = time();
                     }
-                    $battleInfo->save();
                 }
                 else{
                     switch ($request->json('Type')){
-                        case 0:
+                        case 0: //MyLevel win
                             $user_info->money += config('wormix.game.missions.awards.medium.money');
                             $wormData->experience += config('wormix.game.missions.awards.medium.experience');
                             break;
-                        case 1:
+                        case 1: //High level win
                             $user_info->money += config('wormix.game.missions.awards.high.money');
                             $wormData->experience += config('wormix.game.missions.awards.high.experience');
                             break;
-                        case 2:
+                        case 2: //Low level win
                             $user_info->money += config('wormix.game.missions.awards.low.money');
                             $wormData->experience += config('wormix.game.missions.awards.low.experience');
                             break;
                     }
                 }
                 break;
-            case -1:
+            case -1: //Looser
                 if($battleInfo->battle_type == 0){
                     $user_info->money += config('wormix.game.missions.awards.loose.money');
                     $wormData->experience += config('wormix.game.missions.awards.loose.experience');
@@ -167,6 +233,7 @@ class ArenaController extends Controller
         $user_info->save();
         $wormData->save();
         $battleInfo->current_battle_id = 0;
+        $battleInfo->mission_id = 0;
         $battleInfo->save();
 
         if($battleInfo->battle_type !== 1){
@@ -181,6 +248,32 @@ class ArenaController extends Controller
             if($valid)
                 WormixTrashHelper::addReagents($user_info, $request->json('CollectedReagents'));
         }
+
+        if($mission !== null)
+            $this->processAwards($mission, $twiceRun, $user_info, $wormData);
+    }
+
+    private function processAwards(Mission $mission, bool $isDouble, UserProfile $userProfile, WormData $wormData):void
+    {
+        $awards = $mission->awards;
+        if(count($awards) === 0)
+            return;
+
+        if(count($awards) === 1)
+            $awards = $awards[0];
+        elseif(!$isDouble)
+            $awards = $awards[0];
+        else
+            $awards  = $awards[1];
+
+        $userProfile->money += $awards['money'];
+        $userProfile->real_money += $awards['real_money'];
+        $userProfile->save();
+
+        WormixTrashHelper::addWeaponsAwards($awards['weapons'], $wormData);
+
+        $wormData->experience += $awards['experience'];
+        $wormData->save();
     }
 }
 

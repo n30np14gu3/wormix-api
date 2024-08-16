@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int battle_type
  *
  * @property int mission_id
+ * @property int last_mission_id
  *
  * @property int last_boss_fight_time
  * @property int last_battle_time
@@ -25,6 +26,6 @@ class UserBattleInfo extends Model
     protected $primaryKey = 'user_id';
 
     protected $casts = [
-        'awards' => 'json'
+        'awards' => 'array'
     ];
 }

@@ -35,6 +35,8 @@ class UpdateAccountRequest extends FormRequest
             'worm_data.attack' => 'integer|min:0|max:60',
             'worm_data.race' => 'integer|exists:wormix_races,race_id',
 
+            'battle_info.battles_count' => 'integer|min:0|max:999',
+
             'user.login' => 'string|max:100',
             'user.password' => 'nullable|string|min:8',
             'user.password_confirmation' => 'nullable|string|min:8|required_unless:user.password,null|same:user.password',

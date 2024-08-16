@@ -28,7 +28,7 @@ class UserProfileStructure extends JsonResource
 
             'WormsGroup' => WormStructure::collection($this->teammates()->orderBy('order')->get()),
 
-            'Recipes' => [],
+            'Recipes' => $this->recipes,
 
             'Stuff' => $this->weapons()->where('weapon_id', '>', 1000)->get()->pluck('weapon_id')
         ];

@@ -101,6 +101,13 @@ class AccountController extends Controller
                 $user->save();
 
         }
+
+        if($request->json('battle_info.battles_count') !== null){
+            $battle_info = $request->user()->battle_info;
+            $battle_info->battles_count = $request->json('battle_info.battles_count');
+            $battle_info->save();
+        }
+
         return [
             'success' => true,
         ];

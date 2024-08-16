@@ -22,6 +22,7 @@ return new class extends Migration
             $table->tinyInteger('battle_type')->default(0)->comment('0: default battle, 1: mission, 2: PvP');
 
             $table->integer('mission_id')->default(0);
+            $table->integer('last_mission_id')->default(-1);
 
             $table->integer('last_boss_fight_time')->unsigned()->default(0);
             $table->integer('last_battle_time')->unsigned()->default(0);

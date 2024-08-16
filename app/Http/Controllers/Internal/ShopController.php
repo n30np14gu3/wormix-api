@@ -34,10 +34,16 @@ class ShopController extends Controller
             foreach(Weapon::query()->whereIn('id', array_keys($shopItems))->get() as $weapon){
                 if($weapon->hide_in_shop && $weapon->ref_id === null)
                     throw new \Exception("Attempt to buy hidden item!");
-                if($shopItems["{$weapon->id}"]['MoneyType'] === 0)
+                if($shopItems["{$weapon->id}"]['MoneyType'] === 0){
+                    if($weapon->real_price === 0)
+                        return new ShopResult(Collection::empty(), ShopResult::Error);
                     $realSum += $weapon->infinity ? $weapon->real_price : ($weapon->real_price * $shopItems["{$weapon->id}"]['Count']);
-                if($shopItems["{$weapon->id}"]['MoneyType'] === 1)
+                }
+                if($shopItems["{$weapon->id}"]['MoneyType'] === 1){
+                    if($weapon->price === 0)
+                        return new ShopResult(Collection::empty(), ShopResult::Error);
                     $sum += $weapon->infinity ? $weapon->price : ($weapon->price * $shopItems["{$weapon->id}"]['Count']);
+                }
 
                 //Mb add validation to friends, rating, etc
             }

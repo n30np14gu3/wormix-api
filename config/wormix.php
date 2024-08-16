@@ -16,8 +16,8 @@ return [
                     'experience' => 3
                 ],
                 'draw' => [
-                    'money' => 5,
-                    'experience' => 3
+                    'money' => 4,
+                    'experience' => 20
                 ],
 
                 'low' => [

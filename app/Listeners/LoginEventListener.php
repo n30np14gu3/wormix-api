@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\InternalLoginEvent;
 use App\Helpers\Wormix\WormixTrashHelper;
 use App\Models\Wormix\LoginSequence;
+use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserWeapon;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -73,6 +74,16 @@ class LoginEventListener
             $user_worm = $user->worm_data;
             $user_worm->hat = $new_hat;
             $user_worm->save();
+        }
+
+        $battle_info = UserBattleInfo::query()->where('user_id', $user->id)
+            ->get()
+            ->first();
+
+        //Clear mission id before boss fights
+        if($user->worm_data->level > 5){
+            $battle_info->last_mission_id = 0;
+            $battle_info->save();
         }
         //Destroy expired items
         UserWeapon::destroy(

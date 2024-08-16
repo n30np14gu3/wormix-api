@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('reaction_rate')->unsigned()->default(0)->comment('user reaction rate');
 
             $table->json('reagents')->default("[]")->comment('user reagents');
+            $table->json('recipes')->default("[]")->comment('user craft weapons');
 
             $table->timestamps();
         });

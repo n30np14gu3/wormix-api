@@ -36,7 +36,11 @@ class WormixBotHelper
 
         $bots = Collection::empty();
 
-        $bots_count = ($userWorm->level >= 5 || $userWorm->owner->battle_info->mission_id > 0) ? 6 : 4;
+        $bots_count = (
+            $userWorm->level >= 5 ||
+            $userWorm->owner->battle_info->mission_id < -2 ||
+            $userWorm->owner->battle_info->mission_id >= 0
+        ) ? 6 : 4;
 
         for($i = 0; $i < $bots_count; $i++){
             $worm_group = [];
