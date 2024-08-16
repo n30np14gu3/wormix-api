@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Internal;
 
 use App\Helpers\Wormix\WormixTrashHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Internal\Shop\BuyReactionRateRequest;
 use App\Http\Requests\Internal\Shop\BuyShopItemsRequest;
 use App\Http\Requests\Internal\Shop\ChangeRaceRequest;
+use App\Http\Resources\Internal\Shop\BuyReactionRateResult;
 use App\Http\Resources\Internal\Shop\ChangeRaceResult;
 use App\Http\Resources\Internal\Shop\ShopResult;
 use App\Models\Wormix\Race;
@@ -53,6 +55,12 @@ class ShopController extends Controller
             if($user_profile->money < $sum || $user_profile->real_money < $realSum)
                 return new ShopResult(Collection::empty(), ShopResult::NotEnoughMoney);
 
+            Log::debug("Spend",
+                [
+                    'money' => $sum,
+                    'realSum' => $realSum
+                ]
+            );
             $user_profile->money -= $sum;
             $user_profile->real_money -= $realSum;
             $user_profile->save();
@@ -129,9 +137,28 @@ class ShopController extends Controller
 
     }
 
-    public function buyReaction()
+    public function buyReaction(BuyReactionRateRequest $request)
     {
+        $user_profile = UserProfile::query()
+            ->where('user_id', $request->json('internal_user_id'))
+            ->get()
+            ->first();
 
+        if(
+            $request->json('ReactionRateCount') % 3 !== 0 ||
+            $user_profile->real_money < $request->json('ReactionRateCount') / 3
+        )
+            return [
+                'data' => new BuyReactionRateResult(Collection::empty(), BuyReactionRateResult::Error, 0)
+            ];
+
+        $user_profile->real_money -= $request->json('ReactionRateCount') / 3;
+        $user_profile->reaction_rate += $request->json('ReactionRateCount');
+        $user_profile->save();
+
+        return [
+            'data' => new BuyReactionRateResult(Collection::empty(), BuyReactionRateResult::Success, $request->json('ReactionRateCount'))
+        ];
     }
 
     public function buyBattle()

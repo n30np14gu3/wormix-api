@@ -71,7 +71,7 @@ class InitGameData extends Command
                             'real_price' => @$weapon['realprice'] ?? 0,
                             'required_friends' => @$weapon['requiredFriends'] ?? 0,
                             'required_level' => @$weapon['requiredLevel'] ?? 0,
-                            'infinity' => is_bool(@$weapon['infinite']) && @$weapon['infinite']
+                            'infinity' => array_key_exists('infinite', $weapon)
                         ]
                     );
                     DB::commit();

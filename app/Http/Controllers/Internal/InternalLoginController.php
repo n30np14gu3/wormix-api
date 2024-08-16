@@ -32,7 +32,7 @@ class InternalLoginController extends Controller
                 $old_session =  $session->getTcpSession();
                 $session->setTcpSession($request->json('tcp_session'));
                 Event::dispatch(new InternalLoginEvent($session->getSessionUser()));
-                //$session->loggedIn();
+                $session->loggedIn();
                 return [
                     'type' => 'EnterAccount',
                     'old_session' => $old_session,
