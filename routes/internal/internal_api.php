@@ -30,7 +30,7 @@ Route::middleware(['internal-auth'])->group(function () {
             Route::post('confirm', [ResetController::class, 'confirmReset']);
         });
 
-        Route::post('contribute_stats', [InternalAccountController::class, 'contributeStats']);
+        Route::post('distribute_points', [InternalAccountController::class, 'distributePoints']);
         Route::post('select_stuff', [InternalAccountController::class, 'selectStuff']);
     });
 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Internal;
 
 use App\Helpers\Wormix\WormixTrashHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Internal\Account\DistributePointsRequest;
 use App\Http\Requests\Internal\Account\SelectStuffRequest;
+use App\Http\Resources\Internal\Account\DistributePointsResult;
 use App\Http\Resources\Internal\Account\SelectStuffResult;
 use App\Models\Wormix\UserWeapon;
 use App\Models\Wormix\WormData;
@@ -48,8 +50,25 @@ class InternalAccountController extends Controller
     }
 
 
-    public function contributeStats()
+    public function distributePoints(DistributePointsRequest $request)
     {
+        $wormData = WormData::query()
+            ->where('owner_id', $request->json('internal_user_id')
+            )->get()
+            ->first();
 
+        $available_points = $wormData->level * 2 - ($wormData->armor + $wormData->attack);
+        if($available_points < $request->json('Armor') + $request->json('Attack'))
+            return [
+                'data' => new DistributePointsResult(Collection::empty(), DistributePointsResult::NotEnoughPoints)
+            ];
+
+        $wormData->armor += $request->json('Armor');
+        $wormData->attack += $request->json('Attack');
+        $wormData->save();
+
+        return [
+            'data' => new DistributePointsResult(Collection::empty(), DistributePointsResult::Success)
+        ];
     }
 }
