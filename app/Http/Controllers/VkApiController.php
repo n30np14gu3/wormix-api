@@ -19,6 +19,7 @@ class VkApiController extends Controller
             'getUserSettings' => $this->getUserSettings(),
             'getAppFriends' => $this->getAppFriends(),
             'getProfiles' => $this->getProfiles($request),
+            'getUserBalance' => $this->getUserBalance($request),
             default => "", //Other methods not needed
         };
     }
@@ -81,6 +82,13 @@ class VkApiController extends Controller
 
         return [
             'response' => VkProfile::collection($profiles)
+        ];
+    }
+
+    private function getUserBalance()
+    {
+        return [
+            'response' => config('wormix.vk_balance') * 100
         ];
     }
 }

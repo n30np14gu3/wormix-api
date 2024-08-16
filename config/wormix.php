@@ -56,5 +56,6 @@ return [
             'money' => 150,
             'real_money' => 0,
         ]
-    ]
+    ],
+    'vk_balance' => 10
 ];
