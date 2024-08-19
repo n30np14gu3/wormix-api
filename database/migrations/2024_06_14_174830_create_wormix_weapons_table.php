@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wormix_weapons', function (Blueprint $table) {
-            $table->id();
+            $table->bigInteger('id')->unsigned()->primary();
+            $table->foreignId('ref_id')->nullable()->constrained('wormix_weapons')->cascadeOnDelete();
+
             $table->string('name')->nullable();
 
             $table->boolean('is_starter')->default(0);
@@ -22,8 +24,12 @@ return new class extends Migration
             $table->integer('price')->unsigned()->default(0);
             $table->integer('real_price')->unsigned()->default(0);
 
+            $table->boolean('infinity')->default(0);
+            $table->boolean('one_day')->default(0);
+
             $table->integer('required_friends')->unsigned()->default(0);
             $table->integer('required_level')->unsigned()->default(0);
+            $table->integer('required_rating')->unsigned()->default(0);
 
             $table->timestamps();
         });

@@ -22,18 +22,22 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer',
-            'auth_key' => 'required|string'
+            'tcp_session' => 'required|uuid',
+            'Id' => 'required|integer',
+            'AuthKey' => 'required|string'
         ];
     }
 
     public function messages(): array{
         return [
-            'id.required' => 'id is required',
-            'id.integer' => 'id must be an integer',
+            'tcp_session.required' => 'TCP session is required.',
+            'tcp_session.uuid' => 'TCP session must be is GUID.',
 
-            'auth_key.required' => 'auth_key is required',
-            'auth_key.string' => 'auth_key must be a string',
+            'Id.required' => 'id is required',
+            'Id.integer' => 'id must be an integer',
+
+            'AuthKey.required' => 'auth_key is required',
+            'AuthKey.string' => 'auth_key must be a string',
         ];
     }
 }
