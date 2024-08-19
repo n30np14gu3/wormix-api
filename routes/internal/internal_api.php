@@ -47,7 +47,7 @@ Route::middleware(['internal-auth'])->group(function () {
 
     Route::prefix('team')->group(function () {
         Route::post('add', [TeamController::class, 'addTeammate']);
-        Route::post('delete', [TeamController::class, 'deleteTeammate']);
+        Route::post('remove', [TeamController::class, 'deleteTeammate']);
         Route::post('reorder', [TeamController::class, 'reorderTeam']);
     });
 

@@ -100,9 +100,9 @@ class UpgradeController extends Controller
 
         $sum = (int)(round($sum / 100));
 
-        Log::debug("NeedSum", [
-            'sum' => $sum,
-        ]);
+//        Log::debug("NeedSum", [
+//            'sum' => $sum,
+//        ]);
 
         if($user_profile->real_money < $sum)
             return [

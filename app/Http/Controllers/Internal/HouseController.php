@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Internal;
 use App\Helpers\Wormix\WormixTrashHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Internal\House\PumpReactionRateRequest;
+use App\Http\Requests\Internal\House\PumpReactionsRateRequest;
 use App\Http\Requests\Internal\House\SearchTheHouseRequest;
 use App\Http\Resources\Internal\House\PumpReactionTheHouseResult;
 use App\Http\Resources\Internal\House\SearchTheHouseResult;
@@ -16,9 +17,51 @@ use Illuminate\Support\Facades\Log;
 
 class HouseController extends Controller
 {
-    public function pumpReactions()
+    public function pumpReactions(PumpReactionsRateRequest $request)
     {
+        $result = [];
 
+        foreach($request->json('FriendsIds') as $friendId) {
+            if(HouseAction::query()
+                ->where('user_id', $request->json('internal_user_id'))
+                ->where('to_user_id', $friendId)
+                ->where('action_type', 0)
+                ->where('created_at', '>', now()->subDay())
+                ->exists() ||
+                !HouseAction::query()
+                    ->where('user_id',  $friendId)
+                    ->where('to_user_id', $request->json('internal_user_id'))
+                    ->where('action_type', 0)
+                    ->where('created_at', '>', now()->subDays(3))
+                    ->exists()
+            )
+                continue;
+
+            $result[] = [
+                'FriendId' => $friendId,
+                'Result' => 0
+            ];
+
+            $user_profile = UserProfile::query()
+                ->where('user_id', $friendId)
+                ->get()
+                ->first();
+
+            $user_profile->reaction_rate += 1;
+            $user_profile->save();
+
+            $action = new HouseAction();
+            $action->action_type = 0;
+            $action->user_id = $request->json('internal_user_id');
+            $action->to_user_id = $friendId;
+            $action->save();
+        }
+
+        return [
+            'data' => [
+                'PumpedFriends' => $result
+            ]
+        ];
     }
 
     public function pumpReaction(PumpReactionRateRequest $request)
@@ -105,6 +148,7 @@ class HouseController extends Controller
             case 3: //Reagent
                 $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->toArray();
                 $reagent = $reagents[array_rand($reagents)];
+                WormixTrashHelper::addReagents($user_profile, [$reagent]);
                 return [
                     'data' => new SearchTheHouseResult($search_action, SearchTheHouseResult::Reagent, $reagent)
                 ];

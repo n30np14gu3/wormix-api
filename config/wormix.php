@@ -56,7 +56,7 @@ return [
                 'real_money' => 3,
             ],
             'teammate' => [
-                'money' => 10,
+                'money' => 950,
                 'real_money' => 10,
             ],
             'downgrade' => 5,
