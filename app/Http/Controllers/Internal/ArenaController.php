@@ -97,7 +97,7 @@ class ArenaController extends Controller
         //Random reagents generation
         srand(time());
         $reagents = [];
-        if($request->json('MissionId') > 0)
+        if($request->json('MissionId') >= 0)
             $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 3))->toArray();
 
         if($request->json('MissionId') === 0) {
