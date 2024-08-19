@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Internal\Account;
+namespace App\Http\Requests\Internal\Craft;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class DistributePointsRequest extends FormRequest
+class UpgradeWeaponRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class DistributePointsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'internal_user_id' => 'required|integer|exists:users,id',
-            'Armor' => 'required|integer|min:0|max:60',
-            'Attack' => 'required|integer|min:0|max:60',
+            'RecipeId' => 'required|integer|exists:wormix_craft,id',
+            'internal_user_id' => 'required|integer|exists:users,id'
         ];
     }
 }

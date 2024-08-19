@@ -97,7 +97,7 @@ class ArenaController extends Controller
         //Random reagents generation
         srand(time());
         $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 20))->toArray();
-        
+
         if($request->json('MissionId') === 0) {
             $battle_info->battle_type = 0;
             $awards = [];
@@ -191,7 +191,20 @@ class ArenaController extends Controller
         switch($result){
             case 0: //Draw
                 if($battleInfo->battle_type === 0){
-                    //TODO: complete draw
+                    switch ($request->json('Type')){
+                        case 0: //MyLevel draw
+                            $user_info->money += config('wormix.game.missions.awards.draw.money.medium');
+                            $wormData->experience += config('wormix.game.missions.awards.draw.experience.medium');
+                            break;
+                        case 1: //High level draw
+                            $user_info->money += config('wormix.game.missions.awards.draw.money.high');
+                            $wormData->experience += config('wormix.game.missions.awards.draw.experience.high');
+                            break;
+                        case 2: //Low level draw
+                            $user_info->money += config('wormix.game.missions.awards.draw.money.low');
+                            $wormData->experience += config('wormix.game.missions.awards.draw.experience.low');
+                            break;
+                    }
                 }
                 break;
             case 1: //Winner
@@ -213,16 +226,16 @@ class ArenaController extends Controller
                 else{
                     switch ($request->json('Type')){
                         case 0: //MyLevel win
-                            $user_info->money += config('wormix.game.missions.awards.medium.money');
-                            $wormData->experience += config('wormix.game.missions.awards.medium.experience');
+                            $user_info->money += config('wormix.game.missions.awards.win.money.medium');
+                            $wormData->experience += config('wormix.game.missions.awards.win.experience.medium');
                             break;
                         case 1: //High level win
-                            $user_info->money += config('wormix.game.missions.awards.high.money');
-                            $wormData->experience += config('wormix.game.missions.awards.high.experience');
+                            $user_info->money += config('wormix.game.missions.awards.win.money.high');
+                            $wormData->experience += config('wormix.game.missions.awards.win.experience.high');
                             break;
                         case 2: //Low level win
-                            $user_info->money += config('wormix.game.missions.awards.low.money');
-                            $wormData->experience += config('wormix.game.missions.awards.low.experience');
+                            $user_info->money += config('wormix.game.missions.awards.win.money.low');
+                            $wormData->experience += config('wormix.game.missions.awards.win.experience.low');
                             break;
                     }
                 }
@@ -237,12 +250,21 @@ class ArenaController extends Controller
 
 
         $user_info->save();
-
         $wormData->save();
+
+        $valid = true;
+        foreach($request->json('CollectedReagents') as $reagent){
+            if(!in_array($reagent, $battleInfo->awards['reagents'])){
+                $valid = false;
+                break;
+            }
+        }
+
+        if($valid)
+            WormixTrashHelper::addReagents($user_info, $request->json('CollectedReagents'));
 
         if($mission !== null)
             $this->processAwards($mission, $twiceRun, $user_info, $wormData);
-
 
         $battleInfo->current_battle_id = 0;
         $battleInfo->mission_id = 0;

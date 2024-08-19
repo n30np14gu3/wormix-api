@@ -11,26 +11,36 @@ return [
             'delay' => 120,
             'max' => 5,
             'awards' => [
+
                 'loose' => [
                     'money' => 5,
                     'experience' => 3
                 ],
+
                 'draw' => [
-                    'money' => 4,
-                    'experience' => 20
+                    'money' => [
+                        'low' => 20,
+                        'medium' => 25,
+                        'high' => 30
+                    ],
+                    'experience' => [
+                        'low' => 4,
+                        'medium' => 6,
+                        'high' => 8
+                    ]
                 ],
 
-                'low' => [
-                    'money' => 30,
-                    'experience' => 8
-                ],
-                'medium' => [
-                    'money' => 35,
-                    'experience' => 10
-                ],
-                'high' => [
-                    'money' => 40,
-                    'experience' => 12
+                'win' => [
+                    'money' => [
+                        'low' => 30,
+                        'medium' => 35,
+                        'high' => 40
+                    ],
+                    'experience' => [
+                        'low' => 8,
+                        'medium' => 10,
+                        'high' => 12
+                    ]
                 ]
             ],
 
@@ -49,7 +59,8 @@ return [
                 'money' => 10,
                 'real_money' => 10,
             ],
-            'full_reset' => 10
+            'downgrade' => 5,
+            'full_reset' => 10,
         ],
         'search_keys_per_day' => 10,
         'next_level_award' => [
