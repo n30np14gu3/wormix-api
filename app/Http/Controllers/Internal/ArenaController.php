@@ -96,12 +96,13 @@ class ArenaController extends Controller
 
         //Random reagents generation
         srand(time());
-        $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 20))->toArray();
+        $reagents = [];
+        if($request->json('MissionId') > 0)
+            $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 3))->toArray();
 
         if($request->json('MissionId') === 0) {
             $battle_info->battle_type = 0;
             $awards = [];
-            //$reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 20))->toArray();
         }
         else{
             $battle_info->battle_type = 1;
@@ -111,8 +112,6 @@ class ArenaController extends Controller
                 ->first()
                 ->awards;
         }
-
-
 
         $battle_info->mission_id = $request->json('MissionId');
         $battle_info->awards = [

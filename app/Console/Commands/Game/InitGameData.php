@@ -66,7 +66,7 @@ class InitGameData extends Command
                             'id' => $weapon['id'],
                             'name' => @$this->messages[$weapon['name']] ?? $weapon['name'],
                             'hide_in_shop' => array_key_exists('hideInShop', $weapon),
-                            'is_starter' => false,
+                            'is_starter' => in_array((int)$weapon['id'], config('wormix.starter.weapons')),
                             'price' => @$weapon['price'] ?? 0,
                             'real_price' => @$weapon['realprice'] ?? 0,
                             'required_friends' => @$weapon['requiredFriends'] ?? 0,

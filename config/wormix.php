@@ -4,7 +4,8 @@ return [
         'money' => 450,
         'real_money' => 3,
         'missions' => 10,
-        'race' => 0
+        'race' => 0,
+        'weapons' => [1, 2, 4]
     ],
     'game' => [
         'missions' => [
@@ -59,8 +60,7 @@ return [
                 'money' => 950,
                 'real_money' => 10,
             ],
-            'downgrade' => 5,
-            'full_reset' => 10,
+            'downgrade' => 5
         ],
         'search_keys_per_day' => 10,
         'next_level_award' => [

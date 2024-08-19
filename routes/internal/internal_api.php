@@ -27,7 +27,6 @@ Route::middleware(['internal-auth'])->group(function () {
         Route::prefix('reset')->group(function () {
             Route::post('parameters', [ResetController::class, 'resetParameters']);
             Route::post('account', [ResetController::class, 'resetAccount']);
-            Route::post('confirm', [ResetController::class, 'confirmReset']);
         });
 
         Route::post('distribute_points', [InternalAccountController::class, 'distributePoints']);
