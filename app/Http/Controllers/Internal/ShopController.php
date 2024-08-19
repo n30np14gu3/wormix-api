@@ -13,6 +13,9 @@ use App\Http\Resources\Internal\Shop\BuyBattleResult;
 use App\Http\Resources\Internal\Shop\BuyReactionRateResult;
 use App\Http\Resources\Internal\Shop\ChangeRaceResult;
 use App\Http\Resources\Internal\Shop\ShopResult;
+use App\Http\Resources\Internal\Shop\UnlockMissionResult;
+use App\Models\User;
+use App\Models\Wormix\Mission;
 use App\Models\Wormix\Race;
 use App\Models\Wormix\UserBattleInfo;
 use App\Models\Wormix\UserProfile;
@@ -205,7 +208,46 @@ class ShopController extends Controller
 
     public function unlockMission(UnlockMissionRequest $request)
     {
+        $user = User::query()
+            ->where('id', $request->json('internal_user_id'))
+            ->with([
+                'battle_info',
+                'worm_data',
+                'user_profile'
+            ])
+            ->get()
+            ->first();
 
+        $mission = Mission::query()
+            ->where('mission_id', $request->json('MissionId'))
+            ->get()
+            ->first();
+
+        $mission_price =
+            ($request->json('MissionId') - 1 - $user->battle_info->last_mission_id)
+            * config('wormix.game.buy.boss_mission');
+
+        if(
+            $user->worm_data->level < $mission->required_level ||
+            $user->battle_info->last_mission_id >= $mission->mission_id ||
+            $user->user_profile->real_money < $mission_price
+        ){
+            return [
+                'data' => new UnlockMissionResult(Collection::empty(), UnlockMissionResult::Error)
+            ];
+        }
+
+        $battleInfo = $user->battle_info;
+        $userProfile = $user->user_profile;
+
+        $battleInfo->last_mission_id = $request->json('MissionId') - 1;
+        $userProfile->real_money -= $mission_price;
+        $userProfile->save();
+        $battleInfo->save();
+
+        return [
+            'data' => new UnlockMissionResult(Collection::empty(), UnlockMissionResult::Success)
+        ];
     }
 
 }

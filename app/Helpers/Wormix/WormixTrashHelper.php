@@ -80,6 +80,7 @@ class WormixTrashHelper
 
     public static function addReagents(UserProfile $profile, array $reagents):void
     {
+        Log::debug("Add reagents...");
         if(count($reagents) > count($profile->reagents)){
            $old_reagents  = $profile->reagents;
            $profile->reagents = array_fill(0, count($reagents), 0);

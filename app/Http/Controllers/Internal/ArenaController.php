@@ -60,10 +60,15 @@ class ArenaController extends Controller
             ->get()
             ->first();
 
+        if($battle_info->battles_count <= 0)
+            return response([
+                'message' => 'Not enough battles'
+            ], 422);
+
         if($request->json('MissionId') !== 0){
             if(
                 //Check for bosses
-                ($request->json('MissionId') !== ($battle_info->last_mission_id + 1) && $battle_info->last_mission_id >= 0) ||
+                ($request->json('MissionId') > ($battle_info->last_mission_id + 1))||
 
                 //Check for lessons
                 ($request->json('MissionId') !== ($battle_info->last_mission_id - 1) && $battle_info->last_mission_id < -1)
@@ -90,13 +95,13 @@ class ArenaController extends Controller
         $battle_info->current_battle_id = self::BATTLE_BASE + $battle_info->user_id + $request->json('MissionId');
 
         //Random reagents generation
-        $reagents = [];
         srand(time());
-
+        $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 20))->toArray();
+        
         if($request->json('MissionId') === 0) {
             $battle_info->battle_type = 0;
             $awards = [];
-            $reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 10))->toArray();
+            //$reagents = Reagent::query()->select('reagent_id')->pluck('reagent_id')->random(rand(0, 20))->toArray();
         }
         else{
             $battle_info->battle_type = 1;
@@ -230,27 +235,19 @@ class ArenaController extends Controller
                 break;
         }
 
+
         $user_info->save();
+
         $wormData->save();
-        $battleInfo->current_battle_id = 0;
-        $battleInfo->mission_id = 0;
-        $battleInfo->save();
-
-        if($battleInfo->battle_type !== 1){
-           $valid = true;
-            foreach($battleInfo->awards['reagents'] as $reagent){
-                if(!in_array($reagent, $request->json('CollectedReagents'))){
-                    $valid = false;
-                    break;
-                }
-            }
-
-            if($valid)
-                WormixTrashHelper::addReagents($user_info, $request->json('CollectedReagents'));
-        }
 
         if($mission !== null)
             $this->processAwards($mission, $twiceRun, $user_info, $wormData);
+
+
+        $battleInfo->current_battle_id = 0;
+        $battleInfo->mission_id = 0;
+        $battleInfo->awards = [];
+        $battleInfo->save();
     }
 
     private function processAwards(Mission $mission, bool $isDouble, UserProfile $userProfile, WormData $wormData):void

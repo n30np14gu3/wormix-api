@@ -67,6 +67,7 @@ class AccountController extends Controller
             );
             $worm_data->armor = $strip_params['armor'];
             $worm_data->attack = $strip_params['attack'];
+            $worm_data->experience = 0;
             $worm_data->hat = WormixTrashHelper::getHatByRaceAndHatIds($wormHatAndRace[1], $wormHatAndRace[0]);
             $worm_data->save();
 

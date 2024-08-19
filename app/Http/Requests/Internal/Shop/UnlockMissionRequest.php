@@ -11,7 +11,7 @@ class UnlockMissionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UnlockMissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'internal_user_id' => 'required|integer|exists:users,id',
+            'MissionId' => 'required|min:1|exists:wormix_missions,mission_id'
         ];
     }
 }

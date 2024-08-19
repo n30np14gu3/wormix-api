@@ -57,9 +57,9 @@ Route::middleware(['internal-auth'])->group(function () {
         Route::post('pump_reactions', [HouseController::class, 'pumpReactions']);
     });
 
-    Route::prefix('upgrade')->group(function () {
-        Route::post('upgrade', [UpgradeController::class, 'upgradeWeapon']);
-        Route::post('downgrade', [UpgradeController::class, 'downgradeWeapon']);
+    Route::prefix('craft')->group(function () {
+        Route::post('upgrade_weapon', [UpgradeController::class, 'upgradeWeapon']);
+        Route::post('downgrade_weapon', [UpgradeController::class, 'downgradeWeapon']);
     });
 
     Route::prefix('achievements')->group(base_path('routes/internal/achievements_api.php'));

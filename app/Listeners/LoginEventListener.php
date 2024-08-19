@@ -81,7 +81,7 @@ class LoginEventListener
             ->first();
 
         //Clear mission id before boss fights
-        if($user->worm_data->level > 5){
+        if($user->worm_data->level > 5 && $battle_info->last_mission_id < 0){
             $battle_info->last_mission_id = 0;
             $battle_info->save();
         }

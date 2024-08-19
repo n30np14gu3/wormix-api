@@ -7,6 +7,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UnlockMissionResult extends JsonResource
 {
+    public const Success = 0;
+    public const Error = 1;
+    public const NotEnoughMoney = 3;
+
+    private int $result;
+
+    public function __construct($resource, int $result)
+    {
+        $this->result = $result;
+        parent::__construct($resource);
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -14,6 +26,8 @@ class UnlockMissionResult extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'Result' => $this->result
+        ];
     }
 }
