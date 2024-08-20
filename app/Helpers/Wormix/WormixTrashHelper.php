@@ -80,6 +80,8 @@ class WormixTrashHelper
 
     public static function addReagents(UserProfile $profile, array $reagents):void
     {
+        if(count($reagents) === 0)
+            return;
         //Log::debug("Add reagents...");
         $userReagents = $profile->reagents;
         $maxReagent = max($reagents);
