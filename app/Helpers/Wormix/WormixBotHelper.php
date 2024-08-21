@@ -24,6 +24,7 @@ class WormixBotHelper
             ->where('required_level', '<=', $userWorm->level)
             ->where('required_rating', '<=', $user_profile->rating)
             ->where('hide_in_shop', 0)
+            ->where('price', '!=', 0)
             ->get()
             ->pluck('id')
             ->toArray();
