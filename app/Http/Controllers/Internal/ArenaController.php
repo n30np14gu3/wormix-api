@@ -49,7 +49,7 @@ class ArenaController extends Controller
         }
         return [
             'type' => 'ArenaResult',
-            'data' => new ArenaResult($battle_info)
+            'data' => new ArenaResult($battle_info, $request->json('ReturnUsersProfiles'))
         ];
     }
 
