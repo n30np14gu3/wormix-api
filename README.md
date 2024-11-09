@@ -3,7 +3,7 @@
 ## Install
 ```shell
 composer require
-php artisan app:key
+php artisan key:generate
 php artisan migrate
 php artisan game:init
 ```
